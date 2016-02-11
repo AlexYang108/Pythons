@@ -1,0 +1,70 @@
+# -*- coding:utf-8 -*-
+#!/usr/bin/python
+
+import urllib2
+import sys
+import os
+
+#源文件名称
+f1name = sys.argv[1]
+#结果文件名称
+f2name = f1name[:len(f1name)-4] + '_list.txt'
+
+#创建文件
+f1 = open(f1name,'r')
+f2 = open(f2name,'a')
+
+strTemp = ''
+strLastLine = ''
+strCurrentLine = ''
+
+#处理第一行
+line = f1.readline()
+str = line
+
+strCurrentLine = str.strip()
+
+#记住上一行
+strLastLine = strCurrentLine
+
+#第一行运单号和商品名之间做一个分割
+strTemp = strTemp + str.strip() + '\t'
+
+while line:
+
+	str = line
+	strCurrentLine = str.strip()
+	
+	#第二行
+	#如果当前行是数字，说明是运单号
+	if strCurrentLine.isdigit():
+
+		#如果换了运单号，则把前一个运单的数据写文件
+		if (cmp(strLastLine,strCurrentLine) == -1):
+
+			f2.write(strTemp[:len(strTemp)-2] + '\n')
+
+			#清掉中间数据
+			strTemp = ''
+
+			#记住当前行
+			strLastLine = strCurrentLine
+
+			#记录新的一行
+			strTemp = strTemp + str.strip() + '\t'
+
+	#如果当前行不是数字，说明是商品名称，先保存在strTemp，等待下一行的情况
+	else:
+		strTemp = strTemp + str.strip() + ', '
+	
+	#读取下一行
+	line = f1.readline()
+
+#写最后一运单
+f2.write(strTemp[:len(strTemp)-2] + '\n')
+
+#关闭文件
+f1.close()
+f2.close()
+
+
